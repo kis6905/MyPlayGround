@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.is.mpg.dao.PersistentLoginMapper">
+
+    <select id="getTokenForSeries" parameterType="String" resultType="com.is.mpg.vo.PersistentLogin">
+        SELECT
+        	memberId,
+        	series,
+        	tokenValue,
+        	lastUsed
+        FROM mpg_persistent_login
+        WHERE series = #{series}
+    </select>
+    
+    <insert id="insertToken" parameterType="com.is.mpg.vo.PersistentLogin">
+		INSERT INTO mpg_persistent_login (`memberId`, `series`, `tokenValue`, `lastUsed`)
+		VALUES (#{memberId}, #{series}, #{tokenValue}, #{lastUsed})
+    </insert>
+    
+    <update id="updateToken" parameterType="com.is.mpg.vo.PersistentLogin">
+		UPDATE mpg_persistent_login
+		SET tokenValue = #{tokenValue},
+			lastUsed = #{lastUsed}
+		WHERE series = #{series}
+    </update>
+    
+    <delete id="deleteToken" parameterType="String">
+		DELETE FROM mpg_persistent_login
+		WHERE memberId = #{memberId}
+    </delete>
+    
+</mapper>

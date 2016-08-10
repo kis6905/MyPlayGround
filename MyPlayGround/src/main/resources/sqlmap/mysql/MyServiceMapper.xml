@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.is.mpg.dao.MyServiceMapper">
+
+    <select id="getMyServiceList" resultType="com.is.mpg.vo.MyService">
+        SELECT 
+			serviceId,
+			title,
+			description,
+			sliderImage,
+			iconImage,
+			pageName,
+			DATE_FORMAT(registeredDate, '%Y-%m-%d %H:%i:%s') AS registeredDate,
+			DATE_FORMAT(modifiedDate, '%Y-%m-%d %H:%i:%s') AS modifiedDate
+		FROM mpg_service
+    </select>
+    
+    <select id="getMyServiceOfServiceId" parameterType="Integer" resultType="com.is.mpg.vo.MyService">
+		SELECT 
+			serviceId,
+			title,
+			description,
+			sliderImage,
+			iconImage,
+			pageName,
+			DATE_FORMAT(registeredDate, '%Y-%m-%d %H:%i:%s') AS registeredDate,
+			DATE_FORMAT(modifiedDate, '%Y-%m-%d %H:%i:%s') AS modifiedDate
+		FROM mpg_service
+		WHERE serviceId = #{serviceId}
+    </select>
+    
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+  			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+  			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <context:component-scan base-package="com.is.mpg" />
+    
+	<http auto-config="true" use-expressions="true">
+		<intercept-url pattern="/" access="permitAll" />
+		<intercept-url pattern="/login" access="permitAll" />
+		<intercept-url pattern="/logout" access="permitAll" />
+		<intercept-url pattern="/main/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')" />
+		<intercept-url pattern="/service/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')" />
+		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+        <form-login
+            login-page="/"
+            username-parameter="memberId" password-parameter="password"
+           	login-processing-url="/authentication"
+           	authentication-success-handler-ref="authenticationSuccessHandler"
+           	authentication-failure-handler-ref="authenticationFailureHandler"
+        	always-use-default-target="false" />
+		
+        <logout invalidate-session="true" logout-url="/out" logout-success-url="/logout" delete-cookies="JSESSIONID" />
+        
+        <session-management>
+			<concurrency-control expired-url="/sessiontimeout" max-sessions="5"  />
+		</session-management>
+		
+        <remember-me key="myAppKey" services-ref="rememberMeServices" />
+        
+		<csrf disabled="true"/>
+	</http>
+	
+	<!-- set UserDetails -->
+	<authentication-manager>
+	    <authentication-provider user-service-ref="userDetailsService">
+	    	<password-encoder ref="passwordEncoder" />
+	    </authentication-provider>
+	</authentication-manager>
+	
+	<!-- Beans... -->
+	<beans:bean id="authenticationSuccessHandler" class="com.is.mpg.security.AuthenticationSuccessHandlerImpl" />
+	<beans:bean id="authenticationFailureHandler" class="com.is.mpg.security.AuthenticationFailureHandlerImpl" />
+	<beans:bean id="userDetailsService" class="com.is.mpg.security.UserDetailsServiceImpl" />
+    <beans:bean id="passwordEncoder" class="com.is.mpg.security.PasswordEncoderImpl" />
+    <beans:bean id="tokenRepository" class="com.is.mpg.security.PersistentTokenRepositoryImpl" />
+	<beans:bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices">
+		<beans:constructor-arg value="myAppKey" />
+		<beans:constructor-arg ref="userDetailsService" />
+		<beans:constructor-arg ref="tokenRepository" />
+		<beans:property name="cookieName" value="remember-me" />
+		<beans:property name="tokenLength" value="32" />
+		<beans:property name="parameter" value="remember-me-parameter" />
+		<beans:property name="tokenValiditySeconds" value="604800" />
+	</beans:bean>
+    
+</beans:beans>

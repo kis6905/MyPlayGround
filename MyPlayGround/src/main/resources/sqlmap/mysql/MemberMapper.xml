@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.is.mpg.dao.MemberMapper">
+    
+    <select id="getMemberOfId" parameterType="String" resultType="com.is.mpg.vo.Member">
+        SELECT
+        	memberId,
+        	password,
+        	passwordFailCnt,
+        	nickname,
+        	gradeCodeGroup,
+        	gradeCode,
+        	DATE_FORMAT(registeredDate, '%Y-%m-%d %H:%i:%s') AS registeredDate,
+        	DATE_FORMAT(modifiedDate, '%Y-%m-%d %H:%i:%s') AS modifiedDate,
+        	DATE_FORMAT(lastLoginDate, '%Y-%m-%d %H:%i:%s') AS lastLoginDate
+        FROM mpg_member
+        WHERE memberId = #{memberId}
+    </select>
+    
+    <select id="getSearchMemberList" parameterType="Map" resultType="com.is.mpg.vo.Member">
+		SELECT
+			memberId,
+		    nickname,
+		    gradeCodeGroup,
+		    gradeCode,
+		    DATE_FORMAT(registeredDate, '%Y-%m-%d %H:%i:%s') AS registeredDate,
+        	DATE_FORMAT(modifiedDate, '%Y-%m-%d %H:%i:%s') AS modifiedDate,
+        	DATE_FORMAT(lastLoginDate, '%Y-%m-%d %H:%i:%s') AS lastLoginDate
+		FROM mpg_member
+		WHERE memberId != #{memberId}
+		  AND nickname LIKE CONCAT('%', #{search}, '%')
+		  AND gradeCodeGroup = 0
+		  AND gradeCode = #{gradeCode}
+		ORDER BY nickname ASC
+    </select>
+    
+    <select id="getMemberOfNickname" parameterType="String" resultType="com.is.mpg.vo.Member">
+        SELECT
+        	memberId,
+        	nickname,
+        	gradeCode,
+        	DATE_FORMAT(registeredDate, '%Y-%m-%d %H:%i:%s') AS registeredDate,
+        	DATE_FORMAT(modifiedDate, '%Y-%m-%d %H:%i:%s') AS modifiedDate,
+        	DATE_FORMAT(lastLoginDate, '%Y-%m-%d %H:%i:%s') AS lastLoginDate
+        FROM mpg_member
+        WHERE nickname = #{nickname}
+    </select>
+    
+    <insert id="insertMember" parameterType="com.is.mpg.vo.Member">
+		INSERT INTO mpg_member (`memberId`, `password`, `passwordFailCnt`, `nickname`, `gradeCodeGroup`, `gradeCode`, `registeredDate`, `modifiedDate`, `lastLoginDate`)
+		VALUES (#{memberId}, #{password}, 0, #{nickname}, #{gradeCodeGroup}, #{gradeCode}, SYSDATE(), SYSDATE(), NULL)
+    </insert>
+    
+    <update id="updateWhenLoginSuccess" parameterType="String">
+        UPDATE mpg_member
+        SET passwordFailCnt = 0,
+        	lastLoginDate = SYSDATE()
+        WHERE memberId = #{memberId}
+    </update>
+    
+    <update id="increasePasswordFailCnt" parameterType="String">
+        UPDATE mpg_member
+        SET passwordFailCnt = passwordFailCnt + 1
+        WHERE memberId = #{memberId}
+    </update>
+    
+</mapper>

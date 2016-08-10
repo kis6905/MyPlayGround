@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.is.mpg.dao.ComCodeMapper">
+
+    <select id="getComCode" parameterType="com.is.mpg.vo.ComCode" resultType="com.is.mpg.vo.ComCode">
+        SELECT 
+			codeGroup,
+			code,
+			codeTitle,
+			codeValue
+		FROM mpg_com_code
+		WHERE codeGroup = #{codeGroup}
+		  AND code = #{code}
+    </select>
+    
+</mapper>
