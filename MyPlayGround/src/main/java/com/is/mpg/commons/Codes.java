@@ -3,6 +3,7 @@ package com.is.mpg.commons;
 /**
  * com_code 테이블에서 사용 되는 코드.
  * DB에 저장된 코드 값과 동일해야한다.
+ * test
  * 
  * @author iskwon
  */
